@@ -1,0 +1,101 @@
+class NodoArbol:
+    def __init__(self, valor):
+        self.valor = valor
+        self.izquierdo = None
+        self.derecho = None
+
+
+class ArbolBinarioBusqueda:
+    def __init__(self):
+        self.raiz = None
+
+
+    def insertar(self, valor):
+        if self.raiz is None:
+            self.raiz = NodoArbol(valor)
+        else:
+            self._insertar_recursivo(self.raiz, valor)
+
+
+    def _insertar_recursivo(self, nodo_actual, valor):
+        if valor < nodo_actual.valor:
+            if nodo_actual.izquierdo is None:
+                nodo_actual.izquierdo = NodoArbol(valor)
+            else:
+                self._insertar_recursivo(nodo_actual.izquierdo, valor)
+        elif valor > nodo_actual.valor:
+            if nodo_actual.derecho is None:
+                nodo_actual.derecho = NodoArbol(valor)
+            else:
+                self._insertar_recursivo(nodo_actual.derecho, valor)
+
+
+    def inorder(self, nodo_actual, resultado):
+        if nodo_actual:
+            self.inorder(nodo_actual.izquierdo, resultado)
+            resultado.append(nodo_actual.valor)
+            self.inorder(nodo_actual.derecho, resultado)
+        return resultado
+
+
+    def preorder(self, nodo_actual, resultado):
+        if nodo_actual:
+            resultado.append(nodo_actual.valor)
+            self.preorder(nodo_actual.izquierdo, resultado)
+            self.preorder(nodo_actual.derecho, resultado)
+        return resultado
+
+
+    def postorder(self, nodo_actual, resultado):
+        if nodo_actual:
+            self.postorder(nodo_actual.izquierdo, resultado)
+            self.postorder(nodo_actual.derecho, resultado)
+            resultado.append(nodo_actual.valor)
+        return resultado
+
+
+    def eliminar(self, valor):
+        self.raiz = self._eliminar_recursivo(self.raiz, valor)
+
+
+    def _eliminar_recursivo(self, nodo, valor):
+        if nodo is None:
+            return None
+        if valor < nodo.valor:
+            nodo.izquierdo = self._eliminar_recursivo(nodo.izquierdo, valor)
+        elif valor > nodo.valor:
+            nodo.derecho = self._eliminar_recursivo(nodo.derecho, valor)
+        else:
+            if nodo.izquierdo is None:
+                return nodo.derecho
+            if nodo.derecho is None:
+                return nodo.izquierdo
+            sucesor = nodo.derecho
+            while sucesor.izquierdo:
+                sucesor = sucesor.izquierdo
+            nodo.valor = sucesor.valor
+            nodo.derecho = self._eliminar_recursivo(nodo.derecho, sucesor.valor)
+        return nodo
+
+
+
+
+# Código de ejecución y prueba
+if __name__ == "__main__":
+    elementos = [50, 30, 70, 20, 40, 60, 80]
+    arbol = ArbolBinarioBusqueda()
+   
+    for el in elementos:
+        arbol.insertar(el)
+       
+    print("Elementos insertados correctamente en el árbol binario.")
+    print("Recorrido Inorden:", arbol.inorder(arbol.raiz, []))
+    print("Recorrido Preorden:", arbol.preorder(arbol.raiz, []))
+    print("Recorrido Postorden:", arbol.postorder(arbol.raiz, []))
+
+
+    # Bloque para la eliminación
+    print("\n¿Desea eliminar un número? (s/n): s")
+    print("Número que desea eliminar: 30")
+    arbol.eliminar(30)
+    print("Inorder después de eliminar:", arbol.inorder(arbol.raiz, []))
